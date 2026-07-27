@@ -1,0 +1,35 @@
+{
+  "name": "botwire-mcp",
+  "version": "0.1.0",
+  "description": "The Bot Wire as MCP tools - real-time news for AI agents, $0.005/call via x402 (USDC on Base). No API keys, no signup.",
+  "main": "index.js",
+  "keywords": [
+    "mcp",
+    "x402",
+    "news",
+    "ai-agents",
+    "claude",
+    "micropayments",
+    "base",
+    "usdc",
+    "real-time"
+  ],
+  "author": "The Bot Wire (https://thebotwire.com)",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@x402/core": "^2.19.0",
+    "@x402/evm": "^2.19.0",
+    "@x402/fetch": "^2.19.0",
+    "viem": "^2.55.10",
+    "zod": "^4.4.3"
+  },
+  "bin": {
+    "botwire-mcp": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ArasPasha/botwire-mcp"
+  }
+}
