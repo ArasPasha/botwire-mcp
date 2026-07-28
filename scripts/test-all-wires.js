@@ -7,7 +7,7 @@ const path = require("path");
 const env = fs.readFileSync(path.join(__dirname, "..", ".env"), "utf8");
 const pk = env.match(/BOTWIRE_WALLET_PRIVATE_KEY=(0x[0-9a-fA-F]+)/)[1];
 
-const SELLER = "0xDf868FAbEa29a06b2D3Fdd6083B3Bb63D0D8Ea68";
+const SELLER = "0xC14A40252a34F755E41eBaf25D7F3C183d720c20"; // Coinbase (was Exodus 0xDf86...Ea68)
 const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
 const CALLS = [
