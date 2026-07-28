@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /* botwire-mcp — The Bot Wire (thebotwire.com) as MCP tools for AI agents.
  *
- * 10 real-time data wires your model's training data can't know: breaking news,
- * SEC EDGAR filings, CVEs, US regulations, severe weather, earthquakes, new AI
- * research papers, central bank announcements, Hacker News, and cloud outages.
+ * 20 real-time data wires your model's training data can't know: breaking news,
+ * SEC EDGAR filings, CVEs, security journalism, US regulations, court opinions,
+ * bills, SEC/FTC enforcement, recalls, crypto, weather, earthquakes, arXiv AI
+ * papers, AI lab announcements, central banks, Hacker News, cloud outages,
+ * NASA, sports and remote jobs.
  * Refreshed every 5 minutes, answered in milliseconds. Paid tools cost
  * $0.005–$0.01 per call via x402 micropayments (USDC on Base) — no API keys.
  *
@@ -81,6 +83,16 @@ const WIRES = {
   fed:     { route: "/fed/latest",     filter: "src",      values: ["fed", "fomc", "ecb"],                                        price: "$0.01",  blurb: "central bank announcements (Fed/ECB)" },
   hn:      { route: "/hn/latest",      filter: "feed",     values: ["frontpage", "show", "rising"],                               price: "$0.005", blurb: "Hacker News front page & rising" },
   status:  { route: "/status/latest",  filter: "provider", values: ["aws", "github", "cloudflare", "openai", "anthropic", "azure", "gcp"], price: "$0.005", blurb: "cloud provider incidents & outages" },
+  ailab:   { route: "/ailab/latest",   filter: "lab",      values: ["openai", "deepmind", "google", "huggingface", "aws"],                 price: "$0.005", blurb: "AI lab announcements & research posts" },
+  security:{ route: "/security/news",  filter: "src",      values: ["krebs", "bleepingcomputer", "hackernews", "arstechnica"],             price: "$0.005", blurb: "security journalism & breach reporting" },
+  court:   { route: "/court/opinions", filter: "type",     values: ["scotus", "ca2", "ca9", "cafc", "govinfo"],                            price: "$0.01",  blurb: "new US federal court opinions" },
+  bills:   { route: "/bills/latest",   filter: "type",     values: ["bills", "statutes"],                                                  price: "$0.01",  blurb: "new congressional bills" },
+  enforcement: { route: "/enforcement/latest", filter: "agency", values: ["sec", "ftc"],                                                   price: "$0.01",  blurb: "SEC & FTC enforcement actions" },
+  recalls: { route: "/recalls/latest", filter: "src",      values: ["cpsc", "fda"],                                                        price: "$0.005", blurb: "product recalls & FDA actions" },
+  crypto:  { route: "/crypto/latest",  filter: "src",      values: ["coindesk", "cointelegraph", "ethereum"],                              price: "$0.005", blurb: "crypto & blockchain news" },
+  space:   { route: "/space/latest",   filter: "src",      values: ["nasa"],                                                               price: "$0.005", blurb: "NASA missions & discoveries" },
+  sports:  { route: "/sports/latest",  filter: "src",      values: ["bbc", "espn"],                                                        price: "$0.005", blurb: "sports headlines & results" },
+  jobs:    { route: "/jobs/latest",    filter: "src",      values: ["remote", "hn"],                                                       price: "$0.005", blurb: "remote tech job postings" },
 };
 const WIRE_MENU = Object.entries(WIRES)
   .map(([k, w]) => `${k} (${w.blurb}, ${w.price}; ${w.filter}: ${w.values.join("|")})`)
@@ -96,7 +108,7 @@ function wireParams(w, { query, filter, since, limit }) {
 }
 
 // ── server ──────────────────────────────────────────────────────────────────
-const server = new McpServer({ name: "botwire", version: "0.2.0" });
+const server = new McpServer({ name: "botwire", version: "0.3.0" });
 
 server.registerTool("search_news", {
   description: "Search real-time news (fresher than any model's training data). Returns ranked articles with titles, sources, summaries, ages in minutes. Costs $0.005 in USDC on Base via x402 — requires BOTWIRE_WALLET_PRIVATE_KEY. Categories: markets, crypto, tech, world, business, energy.",

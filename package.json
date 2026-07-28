@@ -1,7 +1,7 @@
 {
   "name": "botwire-mcp",
-  "version": "0.2.0",
-  "description": "The Bot Wire as MCP tools: 10 real-time data wires for AI agents \u2014 news, SEC EDGAR, CVEs, US regulations, weather alerts, earthquakes, arXiv papers, Fed/ECB, Hacker News, cloud outages. Pay-per-call via x402 (USDC on Base), free previews included.",
+  "version": "0.3.0",
+  "description": "The Bot Wire as MCP tools: 20 real-time data wires for AI agents (Claude Code, Claude Desktop, Codex) - news, SEC EDGAR, CVEs, security news, US regulations, court opinions, bills, enforcement, recalls, crypto, weather, earthquakes, arXiv, AI labs, Fed/ECB, Hacker News, cloud outages, NASA, sports, jobs. Pay-per-call via x402 (USDC on Base), free previews.",
   "main": "index.js",
   "keywords": [
     "mcp",
