@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 /* botwire-mcp — The Bot Wire (thebotwire.com) as MCP tools for AI agents.
  *
- * Real-time news your model's training data can't know. 40 curated sources,
- * refreshed every 5 minutes, answered in milliseconds. Paid tools cost $0.005
- * per call via x402 micropayments (USDC on Base) — no API keys, no signup.
+ * 10 real-time data wires your model's training data can't know: breaking news,
+ * SEC EDGAR filings, CVEs, US regulations, severe weather, earthquakes, new AI
+ * research papers, central bank announcements, Hacker News, and cloud outages.
+ * Refreshed every 5 minutes, answered in milliseconds. Paid tools cost
+ * $0.005–$0.01 per call via x402 micropayments (USDC on Base) — no API keys.
  *
  * Config (env):
  *   BOTWIRE_WALLET_PRIVATE_KEY  0x… private key of the AGENT's Base wallet
@@ -68,8 +70,33 @@ function asText(obj) {
   return { content: [{ type: "text", text: JSON.stringify(obj, null, 2) }] };
 }
 
+// ── wire registry (mirrors thebotwire.com /openapi.json v2.1) ───────────────
+const WIRES = {
+  edgar:   { route: "/edgar/filings",  filter: "form",     values: ["8-k", "10-q", "10-k", "form-4", "s-1", "13f", "6-k", "13d"], price: "$0.01",  blurb: "latest SEC EDGAR filings" },
+  cve:     { route: "/cve/latest",     filter: "src",      values: ["cisa", "ubuntu", "msrc", "debian", "zdi"],                   price: "$0.005", blurb: "security advisories & CVEs" },
+  reg:     { route: "/reg/latest",     filter: "type",     values: ["rule", "proposed-rule", "notice", "presidential"],           price: "$0.005", blurb: "new US federal regulations" },
+  weather: { route: "/weather/alerts", filter: "severity", values: ["extreme", "severe", "immediate"],                            price: "$0.005", blurb: "active US severe weather alerts (NWS)" },
+  quake:   { route: "/quake/latest",   filter: "mag",      values: ["significant", "m4.5", "m2.5"],                               price: "$0.005", blurb: "latest earthquakes worldwide (USGS)" },
+  arxiv:   { route: "/arxiv/latest",   filter: "cat",      values: ["ai", "ml", "nlp", "security"],                               price: "$0.005", blurb: "new AI/CS research papers" },
+  fed:     { route: "/fed/latest",     filter: "src",      values: ["fed", "fomc", "ecb"],                                        price: "$0.01",  blurb: "central bank announcements (Fed/ECB)" },
+  hn:      { route: "/hn/latest",      filter: "feed",     values: ["frontpage", "show", "rising"],                               price: "$0.005", blurb: "Hacker News front page & rising" },
+  status:  { route: "/status/latest",  filter: "provider", values: ["aws", "github", "cloudflare", "openai", "anthropic", "azure", "gcp"], price: "$0.005", blurb: "cloud provider incidents & outages" },
+};
+const WIRE_MENU = Object.entries(WIRES)
+  .map(([k, w]) => `${k} (${w.blurb}, ${w.price}; ${w.filter}: ${w.values.join("|")})`)
+  .join("; ");
+
+function wireParams(w, { query, filter, since, limit }) {
+  const p = new URLSearchParams();
+  if (query) p.set("q", query);
+  if (filter) p.set(w.filter, filter);
+  if (since) p.set("since", since);
+  if (limit) p.set("limit", String(limit));
+  return p;
+}
+
 // ── server ──────────────────────────────────────────────────────────────────
-const server = new McpServer({ name: "botwire", version: "0.1.0" });
+const server = new McpServer({ name: "botwire", version: "0.2.0" });
 
 server.registerTool("search_news", {
   description: "Search real-time news (fresher than any model's training data). Returns ranked articles with titles, sources, summaries, ages in minutes. Costs $0.005 in USDC on Base via x402 — requires BOTWIRE_WALLET_PRIVATE_KEY. Categories: markets, crypto, tech, world, business, energy.",
@@ -112,6 +139,34 @@ server.registerTool("preview_news", {
   const p = new URLSearchParams({ q: query });
   if (since) p.set("since", since);
   return asText(await callApi("/news/preview?" + p));
+});
+
+server.registerTool("query_wire", {
+  description: "Query a specialist real-time data wire on The Bot Wire. Wires: " + WIRE_MENU +
+    ". Paid via x402 (USDC on Base) — requires BOTWIRE_WALLET_PRIVATE_KEY. Free version: preview_wire.",
+  inputSchema: {
+    wire: z.enum(Object.keys(WIRES)).describe("Which wire to query"),
+    query: z.string().optional().describe("Search terms (omit for latest items)"),
+    filter: z.string().optional().describe("Wire-specific filter value (see wire list for valid values)"),
+    since: z.string().optional().describe("Freshness window like 2h, 24h, 3d"),
+    limit: z.number().int().min(1).max(50).optional().describe("Max results (default 10)"),
+  },
+}, async ({ wire, query, filter, since, limit }) => {
+  const w = WIRES[wire];
+  return asText(await callApi(w.route + "?" + wireParams(w, { query, filter, since, limit }), { paid: true }));
+});
+
+server.registerTool("preview_wire", {
+  description: "FREE preview of any specialist wire (top 3 results, no summaries). Wires: " +
+    Object.keys(WIRES).join(", ") + ". Upgrade to query_wire for full results.",
+  inputSchema: {
+    wire: z.enum(Object.keys(WIRES)).describe("Which wire to preview"),
+    query: z.string().optional().describe("Search terms (omit for latest items)"),
+    filter: z.string().optional().describe("Wire-specific filter value"),
+  },
+}, async ({ wire, query, filter }) => {
+  const w = WIRES[wire];
+  return asText(await callApi(w.route.replace(/\/[^/]+$/, "/preview") + "?" + wireParams(w, { query, filter })));
 });
 
 server.registerTool("botwire_status", {
