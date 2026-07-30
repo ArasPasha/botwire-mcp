@@ -1,7 +1,7 @@
 {
   "name": "botwire-mcp",
-  "version": "0.3.0",
-  "description": "The Bot Wire as MCP tools: 20 real-time data wires for AI agents (Claude Code, Claude Desktop, Codex) - news, SEC EDGAR, CVEs, security news, US regulations, court opinions, bills, enforcement, recalls, crypto, weather, earthquakes, arXiv, AI labs, Fed/ECB, Hacker News, cloud outages, NASA, sports, jobs. Pay-per-call via x402 (USDC on Base), free previews.",
+  "version": "0.4.0",
+  "description": "The Bot Wire as MCP tools: 40 real-time data wires for AI agents (Claude Code, Claude Desktop, Codex CLI). Primary sources, not a crawler index: SEC EDGAR, the Federal Reserve, BLS/BEA economic data, federal courts, Congress, the White House, DOJ, FDA, WHO/CDC, European Commission, GOV.UK, Pentagon, CISA/CVEs, USGS earthquakes, NWS weather alerts, arXiv, bioRxiv, NASA, plus news, markets, world, tech, crypto, energy, supply chain, open-source releases, gaming, film, music and remote jobs. Pay-per-call via x402 (USDC on Base), free preview on every wire, no API key or signup.",
   "main": "index.js",
   "keywords": [
     "mcp",
@@ -9,10 +9,17 @@
     "news",
     "ai-agents",
     "claude",
+    "claude-code",
+    "codex",
     "micropayments",
     "base",
     "usdc",
-    "real-time"
+    "real-time",
+    "sec-edgar",
+    "cve",
+    "regulations",
+    "data-api",
+    "agent-payments"
   ],
   "author": "The Bot Wire (https://thebotwire.com)",
   "license": "MIT",

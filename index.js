@@ -1,12 +1,16 @@
 #!/usr/bin/env node
 /* botwire-mcp — The Bot Wire (thebotwire.com) as MCP tools for AI agents.
  *
- * 20 real-time data wires your model's training data can't know: breaking news,
- * SEC EDGAR filings, CVEs, security journalism, US regulations, court opinions,
- * bills, SEC/FTC enforcement, recalls, crypto, weather, earthquakes, arXiv AI
- * papers, AI lab announcements, central banks, Hacker News, cloud outages,
- * NASA, sports and remote jobs.
- * Refreshed every 5 minutes, answered in milliseconds. Paid tools cost
+ * 40 real-time data wires your model's training data can't know. Primary
+ * sources, not a crawler's index of them: SEC EDGAR, the Federal Reserve,
+ * BLS/BEA economic data, federal courts, Congress, the White House, DOJ, FDA,
+ * WHO/CDC, the European Commission, GOV.UK, the Pentagon, CISA advisories,
+ * USGS earthquakes, NWS weather alerts, arXiv, bioRxiv, NASA — plus breaking
+ * news, world, tech, markets, crypto, energy, supply chain, open-source
+ * releases, launches, gaming, film, music and remote jobs.
+ * The WIRES registry below is the source of truth; it mirrors lib/wires.js on
+ * the server, so tool descriptions never drift from the live route list.
+ * Refreshed continuously, answered in milliseconds. Paid tools cost
  * $0.005–$0.01 per call via x402 micropayments (USDC on Base) — no API keys.
  *
  * Config (env):
@@ -74,28 +78,50 @@ function asText(obj) {
 
 // ── wire registry (mirrors thebotwire.com /openapi.json v2.1) ───────────────
 const WIRES = {
-  edgar:   { route: "/edgar/filings",  filter: "form",     values: ["8-k", "10-q", "10-k", "form-4", "s-1", "13f", "6-k", "13d"], price: "$0.01",  blurb: "latest SEC EDGAR filings" },
-  cve:     { route: "/cve/latest",     filter: "src",      values: ["cisa", "ubuntu", "msrc", "debian", "zdi"],                   price: "$0.005", blurb: "security advisories & CVEs" },
-  reg:     { route: "/reg/latest",     filter: "type",     values: ["rule", "proposed-rule", "notice", "presidential"],           price: "$0.005", blurb: "new US federal regulations" },
-  weather: { route: "/weather/alerts", filter: "severity", values: ["extreme", "severe", "immediate"],                            price: "$0.005", blurb: "active US severe weather alerts (NWS)" },
-  quake:   { route: "/quake/latest",   filter: "mag",      values: ["significant", "m4.5", "m2.5"],                               price: "$0.005", blurb: "latest earthquakes worldwide (USGS)" },
-  arxiv:   { route: "/arxiv/latest",   filter: "cat",      values: ["ai", "ml", "nlp", "security"],                               price: "$0.005", blurb: "new AI/CS research papers" },
-  fed:     { route: "/fed/latest",     filter: "src",      values: ["fed", "fomc", "ecb"],                                        price: "$0.01",  blurb: "central bank announcements (Fed/ECB)" },
-  hn:      { route: "/hn/latest",      filter: "feed",     values: ["frontpage", "show", "rising"],                               price: "$0.005", blurb: "Hacker News front page & rising" },
-  status:  { route: "/status/latest",  filter: "provider", values: ["aws", "github", "cloudflare", "openai", "anthropic", "azure", "gcp"], price: "$0.005", blurb: "cloud provider incidents & outages" },
-  ailab:   { route: "/ailab/latest",   filter: "lab",      values: ["openai", "deepmind", "google", "huggingface", "aws"],                 price: "$0.005", blurb: "AI lab announcements & research posts" },
-  security:{ route: "/security/news",  filter: "src",      values: ["krebs", "bleepingcomputer", "hackernews", "arstechnica"],             price: "$0.005", blurb: "security journalism & breach reporting" },
-  court:   { route: "/court/opinions", filter: "type",     values: ["scotus", "ca2", "ca9", "cafc", "govinfo"],                            price: "$0.01",  blurb: "new US federal court opinions" },
-  bills:   { route: "/bills/latest",   filter: "type",     values: ["bills", "statutes"],                                                  price: "$0.01",  blurb: "new congressional bills" },
-  enforcement: { route: "/enforcement/latest", filter: "agency", values: ["sec", "ftc"],                                                   price: "$0.01",  blurb: "SEC & FTC enforcement actions" },
-  recalls: { route: "/recalls/latest", filter: "src",      values: ["cpsc", "fda"],                                                        price: "$0.005", blurb: "product recalls & FDA actions" },
-  crypto:  { route: "/crypto/latest",  filter: "src",      values: ["coindesk", "cointelegraph", "ethereum"],                              price: "$0.005", blurb: "crypto & blockchain news" },
-  space:   { route: "/space/latest",   filter: "src",      values: ["nasa"],                                                               price: "$0.005", blurb: "NASA missions & discoveries" },
-  sports:  { route: "/sports/latest",  filter: "src",      values: ["bbc", "espn"],                                                        price: "$0.005", blurb: "sports headlines & results" },
-  jobs:    { route: "/jobs/latest",    filter: "src",      values: ["remote", "hn"],                                                       price: "$0.005", blurb: "remote tech job postings" },
+  edgar:        { route: "/edgar/filings"        , filter: "form"     , values: ["8-k","10-q","10-k","form-4","s-1","13f","6-k","13d"], price: "$0.01", ask: "a company's SEC filings, insider trades, or a specific form (8-K, 10-K, 10-Q, Form 4, S-1, 13F, 13D)" },
+  cve:          { route: "/cve/latest"           , filter: "src"      , values: ["cisa","ubuntu","msrc","debian","zdi"], price: "$0.005", ask: "a vulnerability, CVE, or security advisory affecting a named product or vendor" },
+  reg:          { route: "/reg/latest"           , filter: "type"     , values: ["rule","proposed-rule","notice","presidential"], price: "$0.005", ask: "a new US federal rule, proposed rule, notice, or presidential document" },
+  weather:      { route: "/weather/alerts"       , filter: "severity" , values: ["extreme","severe","immediate"], price: "$0.005", ask: "an active US severe-weather alert for a place: storm, flood, heat, winter, wind" },
+  quake:        { route: "/quake/latest"         , filter: "mag"      , values: ["significant","m4.5","m2.5"], price: "$0.005", ask: "a recent earthquake, its magnitude, depth, or location" },
+  arxiv:        { route: "/arxiv/latest"         , filter: "cat"      , values: ["ai","ml","nlp","security"], price: "$0.005", ask: "a new AI, ML, NLP, or security research paper" },
+  fed:          { route: "/fed/latest"           , filter: "src"      , values: ["fed","fomc","ecb"], price: "$0.01", ask: "what the Federal Reserve, the FOMC, or the ECB just said about rates or policy" },
+  hn:           { route: "/hn/latest"            , filter: "feed"     , values: ["frontpage","show","rising"], price: "$0.005", ask: "what developers are discussing or upvoting right now" },
+  status:       { route: "/status/latest"        , filter: "provider" , values: ["aws","github","cloudflare","openai","anthropic","azure","gcp"], price: "$0.005", ask: "whether AWS, GCP, Azure, GitHub, Cloudflare, OpenAI, or Anthropic is currently down" },
+  ailab:        { route: "/ailab/latest"         , filter: "lab"      , values: ["openai","deepmind","google","huggingface","aws"], price: "$0.005", ask: "what OpenAI, DeepMind, Google, Hugging Face, or AWS just announced or released" },
+  security:     { route: "/security/news"        , filter: "src"      , values: ["bleepingcomputer","krebs","hackernews","arstechnica"], price: "$0.005", ask: "a breach, ransomware incident, or threat-actor campaign being reported" },
+  court:        { route: "/court/opinions"       , filter: "type"     , values: ["scotus","ca2","ca9","cafc","govinfo"], price: "$0.01", ask: "a new US federal court opinion or ruling, including the Supreme Court" },
+  bills:        { route: "/bills/latest"         , filter: "type"     , values: ["bills","statutes"], price: "$0.01", ask: "a newly introduced congressional bill or a statute compilation" },
+  enforcement:  { route: "/enforcement/latest"   , filter: "agency"   , values: ["sec","ftc"], price: "$0.01", ask: "an SEC or FTC enforcement action, fine, or litigation release" },
+  recalls:      { route: "/recalls/latest"       , filter: "src"      , values: ["cpsc","fda"], price: "$0.005", ask: "a consumer product recall or an FDA regulatory action" },
+  crypto:       { route: "/crypto/latest"        , filter: "src"      , values: ["coindesk","cointelegraph","ethereum"], price: "$0.005", ask: "crypto, blockchain, or protocol-level news" },
+  space:        { route: "/space/latest"         , filter: "src"      , values: ["nasa"], price: "$0.005", ask: "a NASA mission, launch, or scientific discovery" },
+  sports:       { route: "/sports/latest"        , filter: "src"      , values: ["bbc","espn"], price: "$0.005", ask: "a score, result, fixture, or transfer" },
+  jobs:         { route: "/jobs/latest"          , filter: "src"      , values: ["remote","hn"], price: "$0.005", ask: "an open remote engineering, design, or product role" },
+  releases:     { route: "/releases/latest"      , filter: "project"  , values: ["node","python","kubernetes","rust","go","react","pytorch","deno","bun"], price: "$0.005", ask: "whether a dependency shipped a new version: Node, CPython, Kubernetes, Rust, Go, React, PyTorch, Deno, Bun" },
+  markets:      { route: "/markets/latest"       , filter: "src"      , values: ["yahoo","marketwatch","seekingalpha"], price: "$0.005", ask: "equities, indices, or macro market movement being reported" },
+  world:        { route: "/world/latest"         , filter: "src"      , values: ["aljazeera","dw","france24","bbc"], price: "$0.005", ask: "an international story from a non-US news desk" },
+  tech:         { route: "/tech/latest"          , filter: "src"      , values: ["techcrunch","verge","ars"], price: "$0.005", ask: "a technology launch, funding round, or platform change" },
+  econ:         { route: "/econ/latest"          , filter: "src"      , values: ["bls","bea","rates"], price: "$0.01", ask: "a US economic data release: CPI, jobs, GDP, interest rates" },
+  science:      { route: "/science/latest"       , filter: "src"      , values: ["nature","science","physorg"], price: "$0.005", ask: "new peer-reviewed research or science reporting" },
+  preprints:    { route: "/preprints/latest"     , filter: "src"      , values: ["biorxiv","medrxiv"], price: "$0.005", ask: "a biology or medicine preprint, before peer review" },
+  publichealth: { route: "/publichealth/latest"  , filter: "src"      , values: ["who","cdc"], price: "$0.005", ask: "a disease outbreak, or WHO/CDC guidance and health advisories" },
+  fda:          { route: "/fda/latest"           , filter: "src"      , values: ["fda"], price: "$0.005", ask: "a drug or device approval, clearance, or safety communication" },
+  doj:          { route: "/doj/latest"           , filter: "src"      , values: ["doj"], price: "$0.005", ask: "a DOJ indictment, settlement, or antitrust action" },
+  eu:           { route: "/eu/latest"            , filter: "src"      , values: ["ec"], price: "$0.005", ask: "a European Commission decision, fine, or directive" },
+  uk:           { route: "/uk/latest"            , filter: "src"      , values: ["govuk"], price: "$0.005", ask: "a UK government announcement from any department" },
+  defense:      { route: "/defense/latest"       , filter: "src"      , values: ["dod"], price: "$0.005", ask: "a US Department of Defense operation, contract award, or statement" },
+  whitehouse:   { route: "/whitehouse/actions"   , filter: "src"      , values: ["actions"], price: "$0.005", ask: "an executive order, proclamation, or presidential memorandum" },
+  energy:       { route: "/energy/latest"        , filter: "src"      , values: ["eia","doe","oil","utilities"], price: "$0.005", ask: "oil, gas, electricity, or renewables news and analysis" },
+  supplychain:  { route: "/supplychain/latest"   , filter: "src"      , values: ["freightwaves","scdive"], price: "$0.005", ask: "freight, shipping, ports, carriers, or logistics" },
+  launches:     { route: "/launches/latest"      , filter: "src"      , values: ["producthunt","lobsters","devto"], price: "$0.005", ask: "a new product or developer project that just launched" },
+  gaming:       { route: "/gaming/latest"        , filter: "src"      , values: ["gamespot","ign"], price: "$0.005", ask: "a video game release, announcement, or studio news" },
+  film:         { route: "/film/latest"          , filter: "src"      , values: ["variety","deadline"], price: "$0.005", ask: "a film or TV deal, casting, or box-office story" },
+  music:        { route: "/music/latest"         , filter: "src"      , values: ["pitchfork","rollingstone"], price: "$0.005", ask: "a music release, tour, or music-business story" },
 };
+// Routing table for the tool description. Leads with the trigger condition,
+// because that is what a model matches its task against when picking a wire.
 const WIRE_MENU = Object.entries(WIRES)
-  .map(([k, w]) => `${k} (${w.blurb}, ${w.price}; ${w.filter}: ${w.values.join("|")})`)
+  .map(([k, w]) => `${k} -> ask when the question is about ${w.ask} [${w.price}, ${w.filter}: ${w.values.join("|")}]`)
   .join("; ");
 
 function wireParams(w, { query, filter, since, limit }) {
