@@ -4,6 +4,11 @@
   "title": "The Bot Wire",
   "description": "57 real-time data wires for AI agents: SEC EDGAR filings, CVEs, federal court opinions, Fed and ECB, US economic data, weather alerts, earthquakes, arXiv, breaking news and more. Primary sources, pay-per-call via x402, free preview on every wire.",
   "version": "0.5.0",
+  "websiteUrl": "https://thebotwire.com",
+  "repository": {
+    "url": "https://github.com/ArasPasha/botwire-mcp",
+    "source": "github"
+  },
   "remotes": [
     {
       "type": "streamable-http",
