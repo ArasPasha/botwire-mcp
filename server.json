@@ -1,6 +1,6 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.araspasha/botwire-mcp",
+  "name": "io.github.ArasPasha/botwire-mcp",
   "title": "The Bot Wire",
   "description": "57 real-time wires from primary sources: SEC, CVEs, courts, Fed, weather, arXiv, news. Free tier.",
   "version": "0.5.0",
