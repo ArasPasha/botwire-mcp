@@ -1,2 +1,6 @@
 node_modules/
 .env
+
+# publisher binary, downloaded from modelcontextprotocol/registry releases
+mcp-publisher.exe
+mcp-publisher*.tar.gz
