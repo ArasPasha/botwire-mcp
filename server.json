@@ -1,43 +1,23 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.ArasPasha/botwire-mcp",
+  "name": "io.github.araspasha/botwire-mcp",
   "title": "The Bot Wire",
-  "description": "40 real-time data wires for AI agents: SEC, courts, Fed, FDA, CVEs. Pay-per-call, no API key.",
-  "websiteUrl": "https://thebotwire.com",
-  "repository": {
-    "url": "https://github.com/ArasPasha/botwire-mcp",
-    "source": "github"
-  },
-  "version": "0.4.1",
-  "packages": [
-    {
-      "registryType": "npm",
-      "registryBaseUrl": "https://registry.npmjs.org",
-      "identifier": "botwire-mcp",
-      "version": "0.4.1",
-      "transport": {
-        "type": "stdio"
-      },
-      "environmentVariables": [
-        {
-          "name": "BOTWIRE_WALLET_PRIVATE_KEY",
-          "description": "Optional. Private key of a funded Base wallet holding USDC. Without it the server still runs and every wire returns its free preview tier; with it, paid routes settle automatically over x402.",
-          "isRequired": false,
-          "isSecret": true
-        },
-        {
-          "name": "BOTWIRE_BASE_URL",
-          "description": "Optional. Overrides the API base URL. Defaults to https://thebotwire.com",
-          "isRequired": false,
-          "isSecret": false
-        }
-      ]
-    }
-  ],
+  "description": "57 real-time data wires for AI agents: SEC EDGAR filings, CVEs, federal court opinions, Fed and ECB, US economic data, weather alerts, earthquakes, arXiv, breaking news and more. Primary sources, pay-per-call via x402, free preview on every wire.",
+  "version": "0.5.0",
   "remotes": [
     {
       "type": "streamable-http",
       "url": "https://thebotwire.com/mcp"
+    }
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "botwire-mcp",
+      "version": "0.5.0",
+      "transport": {
+        "type": "stdio"
+      }
     }
   ]
 }
