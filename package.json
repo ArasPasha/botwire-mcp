@@ -1,8 +1,8 @@
 {
   "name": "botwire-mcp",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "mcpName": "io.github.ArasPasha/botwire-mcp",
-  "description": "The Bot Wire as MCP tools: 57 real-time data wires for AI agents (Claude Code, Claude Desktop, Codex CLI). Primary sources, not a crawler index: SEC EDGAR, the Federal Reserve, BLS/BEA economic data, federal courts, Congress, the White House, DOJ, FDA, WHO/CDC, European Commission, GOV.UK, Pentagon, CISA/CVEs, USGS earthquakes, NWS weather alerts, arXiv, bioRxiv, NASA, plus news, markets, world, tech, crypto, energy, supply chain, open-source releases, gaming, film, music and remote jobs. Pay-per-call via x402 (USDC on Base), free preview on every wire, no API key or signup.",
+  "description": "The Bot Wire as MCP tools: 301 real-time data wires for AI agents (Claude Code, Claude Desktop, Codex CLI). Primary sources, not a crawler index: SEC EDGAR, the Federal Reserve, BLS/BEA economic data, federal courts, Congress, the White House, DOJ, FDA, WHO/CDC, European Commission, GOV.UK, Pentagon, CISA/CVEs, USGS earthquakes, NWS weather alerts, arXiv, bioRxiv, NASA, plus news, markets, world, tech, crypto, energy, supply chain, open-source releases, gaming, film, music and remote jobs. Pay-per-call via x402 (USDC on Base), free preview on every wire, no API key or signup.",
   "main": "index.js",
   "bin": {
     "botwire-mcp": "index.js"
