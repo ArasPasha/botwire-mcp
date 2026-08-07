@@ -62,7 +62,8 @@ async function callApi(path, { paid = false } = {}) {
     return {
       error: "Paid tool requires BOTWIRE_WALLET_PRIVATE_KEY (a funded Base wallet for $0.005 USDC micropayments)." +
         (paidFetchError ? " Init error: " + paidFetchError : "") +
-        " Free alternative: preview_news.",
+        " There is no free alternative that returns data: botwire_status needs no wallet," +
+        " but every tool that returns items is paid.",
     };
   }
   const res = await f(url, { headers: { Accept: "application/json" } });
@@ -434,21 +435,10 @@ server.registerTool("get_headlines", {
   return asText(await callApi("/headlines?" + p, { paid: true }));
 });
 
-server.registerTool("preview_news", {
-  description: "FREE preview tier: top 3 matching headlines (no summaries). Try before paying; upgrade to search_news for full ranked results.",
-  inputSchema: {
-    query: z.string().describe("Search terms"),
-    since: z.string().optional(),
-  },
-}, async ({ query, since }) => {
-  const p = new URLSearchParams({ q: query });
-  if (since) p.set("since", since);
-  return asText(await callApi("/news/preview?" + p));
-});
 
 server.registerTool("query_wire", {
   description: "Query a specialist real-time data wire on The Bot Wire. Wires: " + WIRE_MENU +
-    ". Paid via x402 (USDC on Base) — requires BOTWIRE_WALLET_PRIVATE_KEY. Free version: preview_wire.",
+    ". Paid via x402 (USDC on Base) — requires BOTWIRE_WALLET_PRIVATE_KEY. There is no free tier: every wire that returns data is paid.",
   inputSchema: {
     wire: z.enum(Object.keys(WIRES)).describe("Which wire to query"),
     query: z.string().optional().describe("Search terms (omit for latest items)"),
@@ -461,21 +451,9 @@ server.registerTool("query_wire", {
   return asText(await callApi(w.route + "?" + wireParams(w, { query, filter, since, limit }), { paid: true }));
 });
 
-server.registerTool("preview_wire", {
-  description: "FREE preview of any specialist wire (top 3 results, no summaries). Wires: " +
-    Object.keys(WIRES).join(", ") + ". Upgrade to query_wire for full results.",
-  inputSchema: {
-    wire: z.enum(Object.keys(WIRES)).describe("Which wire to preview"),
-    query: z.string().optional().describe("Search terms (omit for latest items)"),
-    filter: z.string().optional().describe("Wire-specific filter value"),
-  },
-}, async ({ wire, query, filter }) => {
-  const w = WIRES[wire];
-  return asText(await callApi(w.route.replace(/\/[^/]+$/, "/preview") + "?" + wireParams(w, { query, filter })));
-});
 
 server.registerTool("botwire_status", {
-  description: "FREE: The Bot Wire service health — articles in window, last refresh, source count.",
+  description: "No payment required. The Bot Wire service health — articles in window, last refresh, source count.",
   inputSchema: {},
 }, async () => asText(await callApi("/health")));
 
