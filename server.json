@@ -2,8 +2,8 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.ArasPasha/botwire-mcp",
   "title": "The Bot Wire",
-  "description": "57 real-time wires from primary sources: SEC, CVEs, courts, Fed, weather, arXiv, news. Free tier.",
-  "version": "0.5.0",
+  "description": "301 real-time wires: SEC, courts, Fed, CVEs, weather, arXiv, news. Paid per call, no API key.",
+  "version": "0.6.0",
   "websiteUrl": "https://thebotwire.com",
   "repository": {
     "url": "https://github.com/ArasPasha/botwire-mcp",
@@ -19,7 +19,7 @@
     {
       "registryType": "npm",
       "identifier": "botwire-mcp",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "transport": {
         "type": "stdio"
       }
